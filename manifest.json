@@ -1,0 +1,7 @@
+{
+  "name": "Frame2Group",
+  "id": "",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html"
+}
