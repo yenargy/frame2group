@@ -51,7 +51,7 @@ const dotheThang = (currentSelection) => {
           };
         })
         parentNode.insertChild(positionInFrame, newGroup);
-        figma.notify('Successfully converted ' + frames.length + ' frames to groups 🥳', {timeout: 3000});
+        figma.notify('Successfully converted ' + frames.length + ' frames to groups 🥳', {timeout: 500});
         selectedNode.remove();
       }
     }
