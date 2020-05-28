@@ -1,4 +1,4 @@
-figma.showUI(__html__, { width: 250, height: 150 });
+figma.showUI(__html__, { width: 250, height: 250 });
 
 let timer = undefined;
 const key = 'SETTINGS';
@@ -6,18 +6,17 @@ const key = 'SETTINGS';
 figma.ui.onmessage = msg => {
   if (msg.type === 'CONVERT_FRAMES_2_GROUPS') {
     const currentSelection = figma.currentPage.selection;
-    console.log(currentSelection);
     if (currentSelection.length === 0) {
       figma.currentPage.children.forEach(child => {
         console.log('Doing the thang on ' + child.name);
         dotheThang(child);
         console.log('Done');
       })
-    } else if (currentSelection.length === 1) {
-      dotheThang(currentSelection[0]);
     } else {
-      currentSelection.forEach(selection => {
+      currentSelection.forEach((selection) => {
+        console.log('Doing the thang on ' + selection.name);
         dotheThang(selection);
+        console.log('Done');
       })
     }
   }
@@ -34,6 +33,7 @@ const dotheThang = (currentSelection) => {
   if (currentSelection.parent.type !== 'PAGE') {
     frames.unshift({name: currentSelection.name, nodeId: currentSelection.id})
   }
+
   if (frames.length > 0) {
     for (let frame of frames) {
       const selectedNode = figma.getNodeById(frame.nodeId);
@@ -51,17 +51,20 @@ const dotheThang = (currentSelection) => {
           };
         })
         parentNode.insertChild(positionInFrame, newGroup);
-        figma.notify('Successfully converted ' + frames.length + ' frames to groups 🥳');
+        figma.notify('Successfully converted ' + frames.length + ' frames to groups 🥳', {timeout: 3000});
         selectedNode.remove();
       }
     }
   } else {
-    figma.notify('No frames found to convert!😪');
+    figma.notify('No frames found to convert!😪',{timeout: 3000});
   }
 }
 
+
 function* walkTree(node) {
   yield node;
+  // Ignoring instances since we can't convert the frames inside them
+  if (node.type === "INSTANCE") return;
   let children = node.children;
   if (children) {
     for (let child of children) {
@@ -72,7 +75,6 @@ function* walkTree(node) {
 
 const getFrames = (rootNode) => {
   let walker = walkTree(rootNode)
-
   const processOnce = () => {
     let results = [];
     let count = 0;
